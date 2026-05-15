@@ -245,7 +245,7 @@ ${linkedinNote ? `\n## LinkedIn Note:\n${linkedinNote}` : ""}
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system_instruction: {
+        systemInstruction: {
           parts: [{ text: SYSTEM_PROMPT }],
         },
         contents: [{ role: "user", parts: [{ text: userMessage }] }],
