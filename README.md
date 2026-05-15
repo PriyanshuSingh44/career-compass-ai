@@ -81,6 +81,7 @@ career-compass-ai/
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `VITE_GEMINI_API_KEY` | ✅ | Your Google Gemini API key |
+| `VITE_GITHUB_TOKEN` | ❌ | GitHub PAT (increases rate limits from 60 to 5000/hr) |
 
 ## 🧪 Development
 

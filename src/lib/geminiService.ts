@@ -32,6 +32,11 @@ async function fetchGitHubData(githubUrl: string): Promise<{
       Accept: "application/vnd.github.v3+json",
     };
 
+    const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
+    if (githubToken) {
+      headers["Authorization"] = `Bearer ${githubToken}`;
+    }
+
     const res = await fetch(
       `https://api.github.com/users/${username}/repos?sort=stars&per_page=5`,
       { headers }
