@@ -1,250 +1,102 @@
 # CareerForge - AI-Powered Career Intelligence
 
-CareerForge analyzes your resume against job descriptions with surgical precision — detecting skill gaps, optimizing your CV, and building a personalized learning roadmap. It cross-references your GitHub profile to validate technical claims and provide integrity-based assessments.
+CareerForge analyzes your resume against job descriptions with surgical precision — detecting skill gaps, optimizing your CV, and building a personalized learning roadmap. It cross-references your GitHub profile to validate technical claims and provide integrity-based assessments using the latest Google Gemini AI.
 
 ## ✨ Features
 
-- **Smart CV Analysis** - Auto-detects Fresher vs Experienced and scores your resume against the target role
-- **Precision Matching** - Compares your skills with JD requirements and cross-references GitHub activity
-- **Technical Integrity Audit** - Validates your technical claims using real GitHub repository evidence
-- **Growth Roadmap** - Generates a phased learning plan with curated resources to close skill gaps
-- **GitHub Validation** - Analyzes your repositories for testing maturity, DevOps practices, and architectural complexity
+- **Smart CV Analysis** - Auto-detects Fresher vs Experienced level and scores your resume against target roles.
+- **GitHub Validation** - Analyzes your repositories for testing maturity, DevOps practices, and architectural complexity to verify technical claims.
+- **Precision Matching** - Compares your skills with JD requirements and identifies critical gaps.
+- **Technical Integrity Audit** - Validates your technical footprint using real repository evidence.
+- **Growth Roadmap** - Generates a 3-phase personalized learning plan with curated resources.
+- **Local-First** - Performs all analysis on-the-fly with no database required (uses LocalStorage for persistence).
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ or Bun
-- Supabase account (free tier works)
-- Lovable AI account (for AI gateway access)
-- (Optional) GitHub Personal Access Token for higher rate limits
+- **Node.js 18+** (using npm)
+- **Google Gemini API Key** (Get one at [Google AI Studio](https://aistudio.google.com/))
 
 ### 1. Clone and Install
 
 ```bash
+git clone git@github.com:PriyanshuSingh44/career-compass-ai.git
 cd career-compass-ai
 npm install
-# or if you have bun
-bun install
 ```
 
 ### 2. Environment Setup
 
-Copy `.env.example` to `.env` and fill in your credentials:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
+Create a `.env` file in the root directory:
 
 ```env
-# Supabase Configuration
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key
-
-# AI Configuration
-LOVABLE_API_KEY=your-lovable-api-key
-
-# Optional: GitHub Token (increases rate limit from 60 to 5000 req/hour)
-GITHUB_TOKEN=ghp_your_github_token
-
-# Optional: Custom AI Model
-AI_MODEL=google/gemini-3-flash-preview
+# Google Gemini API Configuration
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### 3. Supabase Setup
-
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to SQL Editor and run the migrations:
-
-```bash
-# Option A: Use Supabase CLI
-supabase db push
-
-# Option B: Copy-paste from supabase/migrations/*.sql files
-```
-
-The migrations create:
-- `user_analyses` table with RLS policies
-- Indexes for performance
-- Proper security policies
-
-### 4. Deploy Edge Function
-
-```bash
-# Install Supabase CLI if you haven't
-npm install -g supabase
-
-# Login to Supabase
-supabase login
-
-# Link to your project
-supabase link --project-ref your-project-ref
-
-# Deploy the function
-supabase functions deploy analyze-career-profile
-```
-
-### 5. Run Development Server
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-bun run dev
 ```
 
-Visit `http://localhost:5173` (or the port shown in terminal).
+Visit `http://localhost:5173` to start your first analysis.
 
 ## 📁 Project Structure
 
 ```
 career-compass-ai/
-├── src/
-│   ├── components/       # React components (ui/, ResumeUpload, etc.)
-│   ├── pages/            # Route pages (Index, Dashboard, Results, Auth)
-│   ├── hooks/            # Custom hooks (useAuth, use-toast)
-│   ├── integrations/     # Supabase client
-│   ├── types/            # TypeScript types
-│   └── lib/              # Utility functions
-├── supabase/
-│   ├── functions/        # Edge functions (analyze-career-profile)
-│   └── migrations/       # Database migrations
-├── .env.example          # Environment variables template
-└── package.json
+├── src/                  # Source code
+│   ├── components/       # UI components (shadcn/ui & custom)
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Gemini service & utility functions
+│   ├── pages/            # Application routes/screens
+│   ├── types/            # TypeScript type definitions
+│   ├── App.tsx           # Main application component
+│   ├── main.tsx          # Application entry point
+│   └── index.css         # Global styles & Tailwind directives
+├── public/               # Static assets (images, icons, etc.)
+├── .gitignore            # Files to be ignored by Git
+├── components.json       # shadcn/ui configuration
+├── package.json          # Project dependencies & scripts
+├── postcss.config.js     # PostCSS configuration
+├── tailwind.config.ts    # Tailwind CSS configuration
+├── tsconfig.json         # TypeScript configuration
+├── vite.config.ts        # Vite configuration
+└── vitest.config.ts      # Testing configuration
 ```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VITE_SUPABASE_URL` | ✅ | Your Supabase project URL |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | ✅ | Supabase anon/public key |
-| `LOVABLE_API_KEY` | ✅ | Lovable AI gateway API key |
-| `GITHUB_TOKEN` | ❌ | GitHub PAT (increases rate limits) |
-| `AI_MODEL` | ❌ | AI model to use (default: gemini-3-flash) |
-
-### Getting Your Keys
-
-**Supabase:**
-1. Go to your project settings → API
-2. Copy the `URL` and `anon public` key
-
-**Lovable AI:**
-1. Visit your Lovable workspace
-2. Go to Settings → AI Configuration
-3. Generate/copy your API key
-
-**GitHub Token (Optional):**
-1. Go to GitHub Settings → Developer settings → Personal access tokens
-2. Generate a new token with `repo` scope
-3. Copy and add to `.env`
-
-## 📊 Database Schema
-
-The app uses a single table `user_analyses`:
-
-```sql
-CREATE TABLE user_analyses (
-  id UUID PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id),
-  resume_text TEXT,
-  jd_text TEXT,
-  github_url TEXT,
-  linkedin_url TEXT,
-  analysis_result JSONB,
-  created_at TIMESTAMP
-);
-```
-
-Row Level Security (RLS) ensures users can only access their own data.
-
-## 🧪 Testing
-
-```bash
-npm run test
-# or
-bun run test
-```
-
-## 🏗️ Building for Production
-
-```bash
-npm run build
-# or
-bun run build
-```
-
-Output will be in the `dist/` directory.
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** React 18, TypeScript, Vite
-- **UI:** shadcn/ui, Tailwind CSS, Framer Motion
-- **Backend:** Supabase (Auth, Database, Edge Functions)
-- **AI:** Lovable AI Gateway (Gemini, Claude, etc.)
-- **State:** React Query (@tanstack/react-query)
-- **Forms:** React Hook Form + Zod validation
+- **AI Engine:** Google Gemini 2.0 Flash
+- **Styling:** Tailwind CSS, Framer Motion (Animations)
+- **Components:** shadcn/ui
+- **PDF Processing:** pdfjs-dist
+- **State Management:** React Query, LocalStorage
 
-## 📝 API Endpoints
+## 🔧 Configuration
 
-### Edge Function: `analyze-career-profile`
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_GEMINI_API_KEY` | ✅ | Your Google Gemini API key |
 
-**Input:**
-```json
-{
-  "resumeText": "string",
-  "jobDescription": "string (optional)",
-  "githubUrl": "string (optional)",
-  "linkedinUrl": "string (optional)"
-}
+## 🧪 Development
+
+### Building for Production
+
+```bash
+npm run build
 ```
+The production-ready files will be in the `dist/` directory.
 
-**Output:**
-```json
-{
-  "analysis": {
-    "classification": "Fresher|Experienced",
-    "resume_score": 0-100,
-    "summary": "string",
-    "critical_gaps": [...],
-    "verified_github_skills": [...],
-    "technical_footprint": [...],
-    "technical_validation": {...},
-    "cv_refinement_suggestions": [...],
-    "detailed_roadmap": {...}
-  }
-}
+### Linting
+
+```bash
+npm run lint
 ```
-
-## 🐛 Troubleshooting
-
-**PDF parsing not working:**
-- Make sure `pdfjs-dist` is installed: `npm install pdfjs-dist`
-- Check browser console for worker loading errors
-
-**GitHub rate limit errors:**
-- Add a `GITHUB_TOKEN` to your `.env` file
-- Without a token, you're limited to 60 requests/hour
-
-**Edge function returns 400:**
-- Check that `LOVABLE_API_KEY` is set in Supabase secrets
-- Run: `supabase secrets set LOVABLE_API_KEY=your_key`
-
-**Auth not working:**
-- Verify your Supabase URL and anon key are correct
-- Check that RLS policies are enabled
-
-## 📄 License
-
-This project is private. All rights reserved.
-
-## 🤝 Contributing
-
-This is a personal project. For questions or issues, contact the maintainer.
 
 ---
 
-**Built with ❤️ using Lovable**
+**Built with ❤️ for Career Growth**
